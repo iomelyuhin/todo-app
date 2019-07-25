@@ -1,17 +1,28 @@
 <template lang="pug">
   .todo-input
+    div.error {{validation.firstError('todo.name')}}
     input(
       type="text"
       placeholder="Todo name"
       autofocus
       v-model="todo.name"
       @keydown.enter="addTodo"
+      reqired
+      :class = "{'valid-error' : validation.hasError('todo.name')}"
     ).input
 </template>
 
 <script>
+  import { Validator } from 'simple-vue-validator'
+
   let uniqId = 1;
   export default {
+    maixins: [require('simple-vue-validator').mixin],
+    validators: {
+      'todo.name'(value) {
+        return Validator.value(value).required("Пожалуйста, напишите что-нибудь.");
+      }
+    },
     data() {
       return {
         todo: {
@@ -23,10 +34,15 @@
     },
     methods: {
       addTodo(){
-        this.todo.id = uniqId
-        uniqId++
-        this.$emit('addtodo', {...this.todo});
-        this.todo.name = "";
+        this.$validate().then(success => {
+          if (!success) return ;
+          
+          this.todo.id = uniqId
+          uniqId++
+          this.$emit('addtodo', {...this.todo});
+          this.todo.name = "";
+          this.validation.reset()
+        });
       }
     }
   }
@@ -43,5 +59,18 @@
     color: inherit;
     width: 100%;
     background: #fff;
+    border: 1px solid transparent;
+  }
+  .valid-error {
+    border: 1px solid firebrick;
+  }
+  .todo-input {
+    position: relative;
+  }
+  .error {
+    position: absolute;
+    top: -30px;
+    left: 0;
+    color: firebrick;
   }
 </style>
