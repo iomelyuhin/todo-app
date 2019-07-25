@@ -8,10 +8,16 @@
           :checked="todo.checked"
         ).input
       .title {{todo.name}}
-    button(
-      type="button"
-      @click="removeTodo"
-    ).remove x
+    .button
+      router-link(
+        tag="button"
+        :to="`/view/${todo.name}`"
+      ).view ->
+    .button
+      button(
+        type="button"
+        @click="removeTodo"
+      ).remove x
 </template>
 
 <script>
@@ -21,17 +27,17 @@ export default {
   },
   methods: {
     removeTodo() {
-      this.$emit('removeTodo', this.todo.id)
+      this.$emit("removeTodo", this.todo.id);
     },
     checkTodo(e) {
       const todoItem = {
         ...this.todo,
         checked: e.target.checked
-      }
-      this.$emit('checkTodo', todoItem)
+      };
+      this.$emit("checkTodo", todoItem);
     }
   }
-}
+};
 </script>
 
 <style lang="scss">
@@ -43,6 +49,9 @@ export default {
     .remove {
       visibility: visible;
     }
+    .view {
+      visibility: visible;
+    }
   }
 }
 .checked .title {
@@ -51,7 +60,7 @@ export default {
 .label {
   display: flex;
   align-items: center;
-  flex: 1;  
+  flex: 1;
 }
 .input-block {
   width: 60px;
@@ -74,5 +83,10 @@ export default {
   cursor: pointer;
   font-size: 20px;
   visibility: hidden;
+}
+
+.view {
+  visibility: hidden;
+  cursor: pointer;
 }
 </style>
