@@ -1,32 +1,26 @@
 <template lang="pug">
   .todo
-    todo-input(
-      @addtodo="todo"
-    )
+    todo-input
     todo-list(
       v-if="todos.length > 0"
       :todos="todoFiltered"
-      @removeTodo="removeTodo"
-      @checkTodo="checkTodo"
-      @todoFilter="todoFilter"
     )
 </template>
 
 <script>
-import todoInput from './todoInput'
-import todoList from './todoList'
+import todoInput from './todoInput';
+import todoList from './todoList';
+import { mapState } from 'vuex';
 export default {
-  data() {
-    return {
-      todos: [],
-      filter: "all"
-    }
-  },
   components: {
     todoInput,
     todoList
   },
   computed: {
+    ...mapState({
+      todos: state => state.todos.todos,
+      filter: state => state.todos.filter
+    }),    
     todoFiltered() {
       switch(this.filter) {
         case 'all':
@@ -36,22 +30,6 @@ export default {
         case 'complited':
           return this.todos.filter(item => item.checked);  
       }
-    }
-  },
-  methods: {
-    todo(todo){
-      this.todos.push(todo)
-    },
-    removeTodo(todoid) {
-      this.todos = this.todos.filter(item => item.id !== todoid)
-    },
-    checkTodo(todo) {
-      this.todos = this.todos.map(item => (item.id === todo.id ? todo : item));
-    },
-    todoFilter(filter){
-      this.filter = filter
-      console.log(this.filter);
-      
     }
   }
 }

@@ -6,14 +6,16 @@
       placeholder="Todo name"
       autofocus
       v-model="todo.name"
-      @keydown.enter="addTodo"
+      @keydown.enter="addNewTodo"
       reqired
       :class = "{'valid-error' : validation.hasError('todo.name')}"
     ).input
 </template>
 
 <script>
-  import { Validator } from 'simple-vue-validator'
+  import { Validator } from 'simple-vue-validator';
+
+  import { mapMutations } from 'vuex';
 
   let uniqId = 1;
   export default {
@@ -33,13 +35,14 @@
       }
     },
     methods: {
-      addTodo(){
+      ...mapMutations(['addTodo']),
+      addNewTodo(){
         this.$validate().then(success => {
           if (!success) return ;
           
           this.todo.id = uniqId
           uniqId++
-          this.$emit('addtodo', {...this.todo});
+          this.addTodo({...this.todo});
           this.todo.name = "";
           this.validation.reset()
         });
